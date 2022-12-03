@@ -19,6 +19,8 @@ const fetchChecklist = async (checklistId) => {
     return await results.json();
 };
 
+app.use(express.static('web'));
+
 app.get('/getRandomChecklist/:regionCode', async (req, res) => {
     let checklists = [];
     let fetchAttemptsLeft = 5
@@ -31,8 +33,8 @@ app.get('/getRandomChecklist/:regionCode', async (req, res) => {
         checklists = checklists.filter(checklist => checklist.numSpecies >= avgSpecies);
         fetchAttemptsLeft--;
         console.log("checklists fetched");
-    }  
-    
+        
+    } 
     randomChecklist = checklists[Math.floor(Math.random() * checklists.length)]
     fetchChecklist(randomChecklist.subId).then(checklist => {
         checklistForQuiz = {}
@@ -42,10 +44,13 @@ app.get('/getRandomChecklist/:regionCode', async (req, res) => {
                 count: observation.howManyAtleast,
             }
         }); 
-        checklistForQuiz.location = checklist.locId;
+        checklistForQuiz.location = randomChecklist.loc.name
+        checklistForQuiz.county = randomChecklist.loc.subnational2Name
+        checklistForQuiz.province = randomChecklist.loc.subnational1Name
         checklistForQuiz.id = checklist.subId
-        checklistForQuiz.observer = checklist.userDisplayName       
-        checklistForQuiz.date = checklist.obsDt
+        checklistForQuiz.observer = checklist.userDisplayName 
+        checklistForQuiz.date = randomChecklist.obsDt
+        checklistForQuiz.time = randomChecklist.obsTime
 
         res.send(checklistForQuiz);
     });
