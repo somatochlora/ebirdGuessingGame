@@ -17,9 +17,8 @@ const months = [  ["January", "Jan", 0],
   ["December", "Dec", 11]
 ];
 
+const options = [option1, option2, option3, option4];
 const loadNewQuiz = async quizType => {
-
-
 
     data = await getNewChecklist();
     let species = data.species;
@@ -36,7 +35,7 @@ const loadNewQuiz = async quizType => {
     document.querySelector('#observer').innerText = data.observer;
     let date = data.date.split(" ");
     document.querySelector('#day').innerText = date[0];
-    document.querySelector('#month').innerText = date[1];
+    document.querySelector('#month').innerText = "unknown";
     document.querySelector('#year').innerText = date[2];
     document.querySelector('#time').innerText = data.time;
     let checklistLink = document.createElement('a');
@@ -49,12 +48,28 @@ const loadNewQuiz = async quizType => {
                             .slice(0,3);
     monthsTemp.push(months.find(month => month[1] == date[1]));
     monthsTemp.sort((a, b) => a[2] - b[2]);
-    option1.innerText = monthsTemp[0][0];
-    option2.innerText = monthsTemp[1][0];
-    option3.innerText = monthsTemp[2][0];
-    option4.innerText = monthsTemp[3][0];
+    let options = [];
+    for (let i = 0; i < 4; i++) {
+        options.push(document.querySelector('#options').children[i])
+        options[i].innerText = monthsTemp[i][0];
+        options[i].style.backgroundColor = 'white';
+    }
+    for (let option of options) {
+        option.addEventListener('click', e => {
+            if (months.find(month => month[0] == option.innerText)[1] == date[1]) {
+                option.style.backgroundColor = 'green';
+                console.log("correct");
+            }
+            else {
+                option.style.backgroundColor = 'red';
+                console.log("wrong");
+            } 
+        });
+    }
 }
 
 loadNewQuiz();
 
 document.querySelector('#next').addEventListener('click', e => loadNewQuiz());
+
+
