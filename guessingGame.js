@@ -1,13 +1,15 @@
 const dotenv = require('dotenv').config();
 const express = require('express');
 const fs = require('fs');
+const cors = require('cors');
 
 const eBirdKey = process.env.EBIRD_API_KEY;
 
 const app = express();
-const port = 3000;
+const port = 80;
 
 const taxonomy = JSON.parse(fs.readFileSync('taxonomy.json'));
+const months = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 
 const fetchChecklistsByDate = async (region, y, m, d) => {
     let results = await fetch(`https://api.ebird.org/v2/product/lists/${region}/${y}/${m}/${d}?key=${eBirdKey}&maxResults=200`);
@@ -21,7 +23,7 @@ const fetchChecklist = async (checklistId) => {
 
 app.use(express.static('web'));
 
-app.get('/getRandomChecklist/:regionCode', async (req, res) => {
+app.get('/getRandomChecklist/:regionCode', cors(), async (req, res) => {
     let checklists = [];
     let fetchAttemptsLeft = 5
     while (checklists.length < 1 && fetchAttemptsLeft > 0) {
@@ -35,6 +37,10 @@ app.get('/getRandomChecklist/:regionCode', async (req, res) => {
         console.log("checklists fetched");
         
     } 
+    if (checklists.length == 0) {
+        res.send({status:"failed"});
+        return;
+    }
     randomChecklist = checklists[Math.floor(Math.random() * checklists.length)]
     fetchChecklist(randomChecklist.subId).then(checklist => {
         checklistForQuiz = {}
@@ -49,6 +55,10 @@ app.get('/getRandomChecklist/:regionCode', async (req, res) => {
         checklistForQuiz.province = randomChecklist.loc.subnational1Name
         checklistForQuiz.id = checklist.subId
         checklistForQuiz.observer = checklist.userDisplayName 
+        let date = checklist.obsDt.split(" ");
+        checklistForQuiz.day = date[0];
+        checklistForQuiz.month = months.indexOf(date[1]);
+        checklistForQuiz.month = date[2];
         checklistForQuiz.date = randomChecklist.obsDt
         checklistForQuiz.time = randomChecklist.obsTime
 
