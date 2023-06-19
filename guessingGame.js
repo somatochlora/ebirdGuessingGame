@@ -45,9 +45,14 @@ app.get('/getRandomChecklist/:regionCode', cors(), async (req, res) => {
     fetchChecklist(randomChecklist.subId).then(checklist => {
         checklistForQuiz = {}
         checklistForQuiz.species = checklist.obs.map(observation => {
+            species = taxonomy.find(taxon => taxon.speciesCode == observation.speciesCode);
+            if (species.reportAs) {
+                species = taxonomy.find(taxon => taxon.speciesCode == species.reportAs);
+            }
             return {
-                species: taxonomy.find(taxon => taxon.speciesCode == observation.speciesCode).comName,
+                species: species.comName,
                 count: observation.howManyAtleast,
+                category: species.category, 
             }
         }); 
         checklistForQuiz.location = randomChecklist.loc.name
