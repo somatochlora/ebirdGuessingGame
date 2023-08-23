@@ -6,11 +6,25 @@ body {
     height: 100vh;
     margin: 0;
     padding: 0;
-    text-align: center;
+    text-align: justify;
+    text-align-last: center;
     align-items: center;
 }
 
+h1 {
+    text-align: center;
+}
+
+#game-container, #menu-container {
+    max-width: 700px;
+    margin: 20px;
+}
+
 #question-area {
+}
+
+#month, #year, #day, #time {
+    margin: 3px;
 }
 
 #answers-area {
@@ -23,6 +37,7 @@ body {
 }
 
 #controls-area {
+    text-align: center;
 }
 
 #species-list {
@@ -42,6 +57,9 @@ body {
 .hidden {
     color: black;
     background-color: black;
+    user-select: none;
+    pointer-events: none;
+    cursor: default;
 }
 
 .abundance {

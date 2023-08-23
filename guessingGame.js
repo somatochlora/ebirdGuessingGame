@@ -75,3 +75,12 @@ app.listen(port, () => {
     console.log("App listening");
 });
 
+process
+    .on('unhandledRejection', (reason, promise) => {
+        console.log('Unhandled Rejection at:', reason.stack || reason)
+    })
+    .on('uncaughtException', err => {
+        console.log('Uncaught exception:', err.stack)
+    });
+
+
