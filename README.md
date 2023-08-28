@@ -1,4 +1,4 @@
-# ebird guessing game
+# eBird guessing game
 
 This app is currently online at http://cicindela.net
 
