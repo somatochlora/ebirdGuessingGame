@@ -78,9 +78,15 @@ app.listen(port, () => {
 process
     .on('unhandledRejection', (reason, promise) => {
         console.log('Unhandled Rejection at:', reason.stack || reason)
+        fs.writeFile('unhandledRejection.txt', reason.stack || reason, (err) => {
+            if (err) throw err;
+        });
     })
     .on('uncaughtException', err => {
         console.log('Uncaught exception:', err.stack)
+        fs.writeFile('uncaughtException.txt', err.stack, (err) => {
+            if (err) throw err;
+        });
     });
 
 
